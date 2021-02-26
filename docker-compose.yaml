@@ -1,0 +1,24 @@
+services:
+  backend:
+    container_name: scandiweb_backend_demo
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - database
+    volumes:
+      - .:/src/app
+    ports:
+      - 8080:8080
+  database:
+    container_name: scandiweb_database_demo
+    image: mysql:5.7.22
+    environment:
+      MYSQL_DATABASE: admin
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - .dbdata:/var/lib/mysql
+    ports:
+      - 3307:3306
