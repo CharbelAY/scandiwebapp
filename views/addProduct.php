@@ -39,7 +39,7 @@
         </div>
         <div class="mb-3">
             <label>Price ($)</label>
-            <input name="price"  type="number" class="form-control" onblur="validate('price')" oninput="validate('price')">
+            <input name="price"  type="number" class="form-control" onblur="validate('price')" oninput="validate('price')" step="0.001">
             <div class="invalid-feedback">price is a required field</div>
         </div>
         <div class="mb-3">
@@ -54,30 +54,30 @@
         </div>
         <div class="mb-3" style="display: none" id="DVD-disc" >
             <label>Size (MB)</label>
-            <input name="size"  type="number" class="form-control" onblur="validate('size')">
+            <input name="size"  type="number" class="form-control" onblur="validate('size')" step="0.001">
             <div class="invalid-feedback">Size is a required field</div>
             <div>This is the storage in megabytes</div>
         </div>
         <div class="mb-3" style="display: none" id="Book">
             <label>Weight (kg)</label>
-            <input name="weight"  type="number" class="form-control" onblur="validate('weight')">
+            <input name="weight"  type="number" class="form-control" onblur="validate('weight')" step="0.001">
             <div class="invalid-feedback">Weight is a required field</div>
             <div>This is the weight in kg</div>
         </div>
         <div class="mb-3" id="Furniture" style="display: none">
             <div>
                 <label>Height (CM)</label>
-                <input name="height"   type="number" class="form-control" onblur="validate('height')" >
+                <input name="height"   type="number" class="form-control" onblur="validate('height')" step="0.001">
                 <div class="invalid-feedback">Height is a required field</div>
             </div>
             <div class="mb-3">
                 <label>Width (CM)</label>
-                <input name="width"  type="number" class="form-control" onblur="validate('width')">
+                <input name="width"  type="number" class="form-control" onblur="validate('width')" step="0.001">
                 <div class="invalid-feedback">Width is a required field</div>
             </div>
             <div class="mb-3">
                 <label>Length (CM)</label>
-                <input name="length" type="number" class="form-control" onblur="validate('length')">
+                <input name="length" type="number" class="form-control" onblur="validate('length')" step="0.001">
                 <div class="invalid-feedback">Length is a required field</div>
             </div>
             <div>This is the length in cm</div>

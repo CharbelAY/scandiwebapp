@@ -9,13 +9,13 @@ class m0001_initial{
         id INT AUTO_INCREMENT PRIMARY KEY,
         sku VARCHAR(255) NOT NULL,
         name VARCHAR(255) NOT NULL,
-        price INT NOT NULL,
+        price FLOAT NOT NULL,
         product_type_id INT NOT NULL,
-        size INT,
-        weight INT,
-        length INT,
-        width INT,
-        height INT,
+        size FLOAT ,
+        weight FLOAT ,
+        length FLOAT ,
+        width FLOAT ,
+        height FLOAT ,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=INNODB;
         ";

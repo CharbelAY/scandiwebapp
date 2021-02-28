@@ -9,14 +9,14 @@ class Product extends DbModel
 {
     public string $sku;
     public string $name;
-    public int $price;
+    public float $price;
     public string $type;
-    public ?int $size=null;
+    public ?float $size=null;
     public int $product_type_id ;
-    public ?int $weight=null;
-    public ?int $length=null;
-    public ?int $width=null;
-    public ?int $height=null;
+    public ?float $weight=null;
+    public ?float $length=null;
+    public ?float $width=null;
+    public ?float $height=null;
 
 
     public function tableName(): string
