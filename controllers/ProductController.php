@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\core\BaseController;
 use app\core\Request;
 use app\models\Product;
+use mysql_xdevapi\Exception;
 
 class ProductController extends BaseController
 {
@@ -43,7 +44,11 @@ class ProductController extends BaseController
     public function handleAddProduct(Request $request){
         $product = new Product();
         $body = $request->getBody();
-        $product->loadModel($body);
+        try {
+            $product->loadModel($body);
+        }catch (\Exception $e){
+            return $this->render("addProduct",["model"=>$product,"errorMessage"=>$e->getMessage()]);
+        }
         $product->product_type_id = $product->getIdOfProperty('product_type','type_name',$product->type);
         if($product->save()){
             header('Location: '."/products/list");

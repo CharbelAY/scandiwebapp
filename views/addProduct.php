@@ -26,10 +26,16 @@
     </div>
 </nav>
 <div class="container" style="width: 500px">
+    <?php if($errorMessage): ?>
+        <div class="alert alert-danger" role="alert">
+            <?= $errorMessage ?>
+        </div>
+    <?php endif; ?>
+
     <form action="" method="post" name="form" id="form" onsubmit="return validateForm()">
         <div class="mb-3">
             <label class="form-label">SKU</label>
-            <input name="sku" type="text" class="form-control" onblur="validate('sku')" oninput="validate('sku')">
+            <input name="sku" type="text" class="form-control"  onblur="validate('sku')" oninput="validate('sku')">
             <div class="invalid-feedback">sku is a required field</div>
         </div>
         <div class="mb-3">

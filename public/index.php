@@ -27,6 +27,10 @@ $app->router->get("/products/list",[ProductController::class,"productsList"]);
 
 $app->router->post("/products/list",[ProductController::class,"massDelete"]);
 
+$app->router->get("/error",function (){
+    return "error";
+});
+
 $app->router->get("/addproduct",[ProductController::class,"addProduct"]);
 
 $app->router->post("/addproduct",[ProductController::class,"handleAddProduct"]);

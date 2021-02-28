@@ -4,6 +4,7 @@
 namespace app\models;
 
 use app\core\DbModel;
+use http\Exception;
 
 class Product extends DbModel
 {
@@ -24,8 +25,23 @@ class Product extends DbModel
         return 'product';
     }
 
+    /**
+     * @param $sku
+     * @throws \Exception
+     */
+    private function validateSku($sku){
+        if($this->getIdOfProperty($this->tableName(),'sku',$sku)!==null){
+            throw new \Exception('SKU should be a unique value. The value you entered is already present in the database');
+        }
+    }
+
+    /**
+     * @param $data
+     * @throws \Exception
+     */
     public function loadModel($data)
     {
+        $this->validateSku($data['sku']);
         parent::loadModel($data);
     }
 
