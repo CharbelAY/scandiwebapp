@@ -12,13 +12,8 @@ abstract class Model
     public function loadModel($data){
         foreach ($data as $key=>$value){
             if (property_exists($this,$key)){
-                $modelKey=$this->{$key};
-                $keyType = gettype($modelKey);
-                if($keyType==="integer"){
-                    $this->{$key}= (int)$value;
-                }else{
+                if($value!==""){
                     $this->{$key}=$value;
-
                 }
             }
         }

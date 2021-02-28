@@ -6,7 +6,7 @@ namespace app\core;
 
 class BaseController
 {
-    public string $layout = "auth";
+    public string $layout = "emptyLayout";
 
     public function setLayout($layout){
         $this->layout=$layout;

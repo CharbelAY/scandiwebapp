@@ -3,10 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-
     <title>Test</title>
 </head>
 <body>
@@ -28,13 +25,12 @@
         </div>
     </div>
 </nav>
-
 <div class="container" style="width: 500px">
     <form action="" method="post" name="form" id="form" onsubmit="return validateForm()">
         <div class="mb-3">
-                    <label class="form-label">SKU</label>
-                    <input name="sku" type="text" class="form-control" onblur="validate('sku')" oninput="validate('sku')">
-                    <div class="invalid-feedback">sku is a required field</div>
+            <label class="form-label">SKU</label>
+            <input name="sku" type="text" class="form-control" onblur="validate('sku')" oninput="validate('sku')">
+            <div class="invalid-feedback">sku is a required field</div>
         </div>
         <div class="mb-3">
             <label class="form-label">Name</label>
@@ -50,25 +46,25 @@
             <label>Type Switcher</label>
             <select class="form-select mb-3" name="type" oninput="validate('type'); updateForm();">
                 <option selected>Choose type</option>
-                <option value="size">Size</option>
-                <option value="weight">Weight</option>
-                <option value="dimensions">Dimentions</option>
+                <option value="DVD-disc">DVD-disc</option>
+                <option value="Book">Book</option>
+                <option value="Furniture">Furniture</option>
             </select>
             <div class="invalid-feedback">type is a required field</div>
         </div>
-        <div class="mb-3" style="display: none" id="size" >
+        <div class="mb-3" style="display: none" id="DVD-disc" >
             <label>Size (MB)</label>
             <input name="size"  type="number" class="form-control" onblur="validate('size')">
             <div class="invalid-feedback">Size is a required field</div>
             <div>This is the storage in megabytes</div>
         </div>
-        <div class="mb-3" style="display: none" id="weight">
+        <div class="mb-3" style="display: none" id="Book">
             <label>Weight (kg)</label>
             <input name="weight"  type="number" class="form-control" onblur="validate('weight')">
             <div class="invalid-feedback">Weight is a required field</div>
             <div>This is the weight in kg</div>
         </div>
-        <div class="mb-3" id="dimensions" style="display: none">
+        <div class="mb-3" id="Furniture" style="display: none">
             <div>
                 <label>Height (CM)</label>
                 <input name="height"   type="number" class="form-control" onblur="validate('height')" >
@@ -84,28 +80,25 @@
                 <input name="length" type="number" class="form-control" onblur="validate('length')">
                 <div class="invalid-feedback">Length is a required field</div>
             </div>
-
             <div>This is the length in cm</div>
         </div>
     </form>
 </div>
-
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 <script>
 
+    let targetForm = document.forms["form"];
     let inputFields ={
-        "sku": document.forms["form"]['sku'],
-        "name": document.forms["form"]['name'],
-        "price": document.forms["form"]["price"],
-        "type":document.forms["form"]["type"],
-        "size":document.forms["form"]["size"],
-        "weight":document.forms["form"]["weight"],
-        "height":document.forms["form"]["height"],
-        "length":document.forms["form"]["length"],
-        "width":document.forms["form"]["width"],
+        "sku": targetForm['sku'],
+        "name": targetForm['name'],
+        "price": targetForm["price"],
+        "type":targetForm["type"],
+        "size":targetForm["size"],
+        "weight":targetForm["weight"],
+        "height":targetForm["height"],
+        "length":targetForm["length"],
+        "width":targetForm["width"],
     };
-
 
     formFieldsValues={
         "sku":false,
@@ -118,15 +111,11 @@
         "width":false,
         "length":false,
     };
-
     let selectedType="";
-
     let staticFields=["sku","name","price","type"];
-    let optionalFields=["weight","dimensions","size"];
+    let optionalFields=["Book","Furniture","DVD-disc"];
     let dimensionsFields=["height","width","length"];
     let disableCandidates=["length","height","width","size","weight"];
-
-
     function validateForm(){
         for (let i = 0; i < staticFields.length; i++) {
             if(formFieldsValues[staticFields[i]]===false){
@@ -134,12 +123,7 @@
                 return false;
             }
         }
-        if(selectedType!=='dimensions'){
-            if(formFieldsValues[selectedType]===false){
-                populateErrors();
-                return false;
-            }
-        }else{
+        if(selectedType==='Furniture'){
             for (let i = 0; i < dimensionsFields.length; i++) {
                 if(formFieldsValues[dimensionsFields[i]]===false){
                     populateErrors();
@@ -147,41 +131,58 @@
                 }
             }
         }
-
+        if(selectedType==='DVD-disk'){
+            if(formFieldsValues['size']===false){
+                populateErrors();
+                return false;
+            }
+        }
+        if(selectedType==='Book'){
+            if(formFieldsValues['weight']===false){
+                populateErrors();
+                return false;
+            }
+        }
         disable(getOptionsToBeDisabled());
-        return true;
+        targetForm.submit();
+        targetForm.reset();
+        return false;
     }
+
 
     function getOptionsToBeDisabled(){
         let toBeDisabled=[];
-        if(selectedType==="weight"){
+        if(selectedType==="Book"){
             toBeDisabled = disableCandidates.filter(ele=>(ele!=="weight"));
-        }else if(selectedType==="size"){
+        }else if(selectedType==="DVD-disk"){
             toBeDisabled = disableCandidates.filter(ele=>(ele!=="size"));
-        }else if(selectedType==="dimensions"){
+        }else if(selectedType==="Furniture"){
             toBeDisabled = disableCandidates.filter(ele=>(ele!=="length" && ele!=="height" && ele!=="width"));
         }
         return toBeDisabled;
     }
-
-
     function disable(options){
         for (let i = 0; i < options.length; i++) {
-           console.log(inputFields[options[i]].disabled = true);
+            console.log(inputFields[options[i]].disabled = true);
         }
     }
-
     function populateErrors(){
         for (let i = 0; i < staticFields.length; i++) {
             if(formFieldsValues[staticFields[i]]===false){
                 inputFields[staticFields[i]].classList.add("is-invalid");
             }
         }
-        if(selectedType!=='dimensions'){
-            if(formFieldsValues[selectedType]===false){
-                inputFields[selectedType].classList.add("is-invalid");
+        if(selectedType==='DVD-disc'){
+            if(formFieldsValues['size']===false){
+                inputFields['size'].classList.add("is-invalid");
             }
-        }else{
+        }
+        if(selectedType==='Book'){
+            if(formFieldsValues['weight']===false){
+                inputFields['weight'].classList.add("is-invalid");
+            }
+        }
+        if(selectedType==='Furniture'){
             for (let i = 0; i < dimensionsFields.length; i++) {
                 if(formFieldsValues[dimensionsFields[i]]===false){
                     inputFields[dimensionsFields[i]].classList.add("is-invalid");
@@ -189,7 +190,6 @@
             }
         }
     }
-
     function validate(inputName){
         if(inputName === 'type'){
             if(inputFields[inputName].value==='Choose type'){
@@ -209,24 +209,19 @@
             }
         }
     }
-
     function updateForm(){
         closeAllOptionalFields();
         let newField = inputFields['type'].value;
         selectedType=newField;
-        document.querySelector("#"+newField).style.display="";
+        if(newField!=='Choose type'){
+            document.querySelector("#"+newField).style.display="";
+        }
     }
-
-
     function closeAllOptionalFields(){
-        optionalFields.forEach(function (item,index){
+        optionalFields.forEach(function (item){
             document.querySelector("#"+item).style.display="none";
         });
     }
-
-
-
 </script>
-
 </body>
 </html>

@@ -19,17 +19,17 @@
 
 <form action="" method="post" name="form" id="form">
 <ul>
-    <?php if($names): ?>
-    <?php foreach ($names as $name): ?>
+    <?php if($products): ?>
+    <?php foreach ($products as $product): ?>
         <div class="card text-center m-3" style="width: 20rem; display: inline-block" >
             <div class="card-body">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="<?= $name["id"] ?>"  >
+                    <input class="form-check-input" type="checkbox" name="<?= $product["id"] ?>"  >
                 </div>
-                <h5 class="card-title"><?= $name["sku"] ?></h5>
-                <h6 class="card-subtitle mb-2 text-muted"><?= $name["name"]?></h6>
-                <p class="card-text"><?= $name["price"]?></p>
-                <p class="card-text"><?= $name["type"] . ": " . $name["measurementvalue"]?></p>
+                <h5 class="card-title"><?= $product["sku"] ?></h5>
+                <h5 class="card-title"><?= $product["name"]?></h5>
+                <h5 class="card-title"><?= $product["price"] . " $"?></h5>
+                <h5 class="card-title"><?= $product["measurement_presentation"]?></h5>
             </div>
         </div>
     <?php endforeach;?>

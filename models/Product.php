@@ -7,11 +7,16 @@ use app\core\DbModel;
 
 class Product extends DbModel
 {
-    public string $sku="";
-    public string $name="";
-    public int $price=0;
-    public string $type="";
-    public string $measurementvalue="";
+    public string $sku;
+    public string $name;
+    public int $price;
+    public string $type;
+    public ?int $size=null;
+    public int $product_type_id ;
+    public ?int $weight=null;
+    public ?int $length=null;
+    public ?int $width=null;
+    public ?int $height=null;
 
 
     public function tableName(): string
@@ -22,21 +27,41 @@ class Product extends DbModel
     public function loadModel($data)
     {
         parent::loadModel($data);
-        if(array_key_exists ( "size" ,  $data )){
-            $this->measurementvalue=$data["size"];
-        }
-        else if(array_key_exists ( "weight" ,  $data )){
-            $this->measurementvalue=$data["weight"];
-        }
-        else if(array_key_exists ( "height" ,  $data )){
-            $this->measurementvalue= $data["height"]."x".$data["width"]."x".$data["length"];
-        }
-
     }
 
+    public function prepareModel($data){
+        if(array_key_exists ( "type" ,  $data )){
+            if($data["type"]==="size"){
+                $this->type="DVD-disc";
+            }
+            if($data["type"]==="weight"){
+                $this->type="Book";
+            }
+            if($data["type"]==="dimensions"){
+                $this->type="Furniture";
+            }
+        }
+    }
+
+    public static function present($fetchedData){
+        foreach ($fetchedData as &$element){
+            if($element['type_name']==='DVD-disc'){
+                $element['measurement_presentation'] = 'Size' . ": " . $element['size'] . $element['unit_of_measure'];
+            }elseif ($element['type_name']==='Book'){
+                $element['measurement_presentation']= 'Weight' . ": " . $element['weight'] . $element['unit_of_measure'];;
+            }else{
+                $element['measurement_presentation']= 'Dimentions' . ": " . $element['height'] . 'x' . $element['width'] . 'x' . $element['length'] . $element['unit_of_measure'];;
+            }
+        }
+        return $fetchedData;
+    }
+
+    public function dontSave():array{
+        return ['type'];
+    }
 
     public function attributes(): array
     {
-        return ["sku","name","price","type","measurementvalue"];
+        return ["sku","name","price","type","size","weight","length","width","height","product_type_id"];
     }
 }

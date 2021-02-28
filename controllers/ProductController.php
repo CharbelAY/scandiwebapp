@@ -10,11 +10,11 @@ class ProductController extends BaseController
 {
 
     public function productsList(){
-        $this->setLayout("emptyLayout");
         $product = new Product();
-        $fetchedData = $product->getAll();
+        $fetchedData = $product->getAllWith('product_type');
+        $fetchedData = Product::present($fetchedData);
         $params=[
-            "names"=>$fetchedData,
+            "products"=>$fetchedData,
         ];
         return  $this->render("productsList",$params);
     }
@@ -27,9 +27,8 @@ class ProductController extends BaseController
             header('Location: '."/products/list");
             exit();
         }else{
-            $this->setLayout("emptyLayout");
-            $params["names"]=[];
-            return  $this->render("productsList",$params);
+            header('Location: '."/products/list");
+            exit();
         }
 
     }
@@ -45,6 +44,7 @@ class ProductController extends BaseController
         $product = new Product();
         $body = $request->getBody();
         $product->loadModel($body);
+        $product->product_type_id = $product->getIdOfProperty('product_type','type_name',$product->type);
         if($product->save()){
             header('Location: '."/products/list");
             exit();
