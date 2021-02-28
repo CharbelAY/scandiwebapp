@@ -19,7 +19,8 @@ $app = new Application(__DIR__,$config);
 
 
 $app->router->get("/",function (){
-    return "Hello World";
+    header('Location: '."/products/list");
+    exit();
 });
 
 $app->router->get("/products/list",[ProductController::class,"productsList"]);
