@@ -4,7 +4,9 @@ namespace app\controllers;
 
 use app\core\BaseController;
 use app\core\Request;
+use app\models\OptionalsInputs;
 use app\models\Product;
+use app\models\ProductType;
 use mysql_xdevapi\Exception;
 
 class ProductController extends BaseController
@@ -36,28 +38,44 @@ class ProductController extends BaseController
 
     public function addProduct(){
         $product = new Product();
+        $productType = new ProductType();
         $this->setLayout("emptyLayout");
-        return  $this->render("addProduct",["model"=>$product]);
+        return  $this->render("addProduct",["model"=>$product, "optionalInputs"=>[],"product_type"=>$productType->getAll()]);
 
     }
 
     public function handleAddProduct(Request $request){
         $product = new Product();
+        $productType = new ProductType();
+        $optionalInputsClass = new OptionalsInputs();
         $body = $request->getBody();
         try {
             $product->loadModel($body);
         }catch (\Exception $e){
-            return $this->render("addProduct",["model"=>$product,"errorMessage"=>$e->getMessage()]);
+            $optionalInputsData = $optionalInputsClass->getAllWhere("product_type_id",$body["product_type_id"]);
+            return $this->render("addProduct",["model"=>$product,"errorMessage"=>$e->getMessage(),"optionalInputs"=>$optionalInputsData,"product_type"=>$productType->getAll()]);
         }
-        $product->product_type_id = $product->getIdOfProperty('product_type','type_name',$product->type);
+        $product->product_type_id = $product->getIdOfProperty('product_type','id',$body["product_type_id"]);
         if($product->save()){
             header('Location: '."/products/list");
             exit();
         }else{
             $this->setLayout("emptyLayout");
-            return $this->render("addProduct",["model"=>$product]);
+            return $this->render("addProduct",["model"=>$product,"optionalInputs"=>[] ]);
         }
     }
+
+    public function appendFormsDynamicField(Request $request){
+        header("Content-type:application/json");
+        $optionalInputsClass = new OptionalsInputs();
+        $body = $request->getBody();
+        $optionalInputs=[];
+        if($body['type']!==null && $body['type']!=='' ){
+            $optionalInputs = $optionalInputsClass->getAllWhere("product_type_id",$body["type"]);
+        }
+        return json_encode($optionalInputs);
+    }
+
 
     function url(){
         return sprintf(

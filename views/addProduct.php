@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <title>Test</title>
+
+    <style>
+        label.error {
+            color: red;
+            font-size: 1rem;
+            display: block;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light p-4">
@@ -26,208 +35,137 @@
     </div>
 </nav>
 <div class="container" style="width: 500px">
+
     <?php if($errorMessage): ?>
         <div class="alert alert-danger" role="alert">
             <?= $errorMessage ?>
         </div>
     <?php endif; ?>
 
-    <form action="" method="post" name="form" id="form" onsubmit="return validateForm()">
+    <form action="" method="post" name="form" id="form">
         <div class="mb-3">
             <label class="form-label">SKU</label>
-            <input name="sku" type="text" class="form-control"  onblur="validate('sku')" oninput="validate('sku')">
-            <div class="invalid-feedback">sku is a required field</div>
+            <input name="sku" type="text" class="form-control" value="<?= $model->sku; ?>">
         </div>
         <div class="mb-3">
             <label class="form-label">Name</label>
-            <input name="name"  type="text" class="form-control" onblur="validate('name')" oninput="validate('name')">
-            <div class="invalid-feedback">name is a required field</div>
+            <input name="name"  type="text" class="form-control"  value="<?= $model->name; ?>">
         </div>
         <div class="mb-3">
             <label>Price ($)</label>
-            <input name="price"  type="number" class="form-control" onblur="validate('price')" oninput="validate('price')" step="0.001">
-            <div class="invalid-feedback">price is a required field</div>
+            <input name="price"  type="number" class="form-control" value="<?= $model->price==0? null : $model->price ; ?>">
         </div>
         <div class="mb-3">
             <label>Type Switcher</label>
-            <select class="form-select mb-3" name="type" oninput="validate('type'); updateForm();">
-                <option selected>Choose type</option>
-                <option value="DVD-disc">DVD-disc</option>
-                <option value="Book">Book</option>
-                <option value="Furniture">Furniture</option>
+            <select class="form-select mb-3"  name="product_type_id" id="typeSelector" value="<?= $model->product_type_id; ?>">
+                <option value=""> Choose type</option>
+                <?php foreach ($product_type as $type): ?>
+                    <option value="<?=$type["id"]; ?>" <?= $model->product_type_id==$type["id"] ? 'selected="selected"': '' ?>> <?= $type["type_name"] ?> </option>
+                <?php endforeach;?>
             </select>
-            <div class="invalid-feedback">type is a required field</div>
         </div>
-        <div class="mb-3" style="display: none" id="DVD-disc" >
-            <label>Size (MB)</label>
-            <input name="size"  type="number" class="form-control" onblur="validate('size')" step="0.001">
-            <div class="invalid-feedback">Size is a required field</div>
-            <div>This is the storage in megabytes</div>
-        </div>
-        <div class="mb-3" style="display: none" id="Book">
-            <label>Weight (kg)</label>
-            <input name="weight"  type="number" class="form-control" onblur="validate('weight')" step="0.001">
-            <div class="invalid-feedback">Weight is a required field</div>
-            <div>This is the weight in kg</div>
-        </div>
-        <div class="mb-3" id="Furniture" style="display: none">
-            <div>
-                <label>Height (CM)</label>
-                <input name="height"   type="number" class="form-control" onblur="validate('height')" step="0.001">
-                <div class="invalid-feedback">Height is a required field</div>
+        <?php foreach ($optionalInputs as $options): ?>
+            <div class="mb-3 optional-container-class" >
+                <label><?=  $options['label'] ?></label>
+                <input name="<?=  $options['name'] ?>"  type="<?=  $options['type'] ?>" class="form-control"  step="<?=  $options['step'] ?>" value="<?= $model->size; ?>">
+                <div><?=  $options['message'] ?></div>
             </div>
-            <div class="mb-3">
-                <label>Width (CM)</label>
-                <input name="width"  type="number" class="form-control" onblur="validate('width')" step="0.001">
-                <div class="invalid-feedback">Width is a required field</div>
-            </div>
-            <div class="mb-3">
-                <label>Length (CM)</label>
-                <input name="length" type="number" class="form-control" onblur="validate('length')" step="0.001">
-                <div class="invalid-feedback">Length is a required field</div>
-            </div>
-            <div>This is the length in cm</div>
-        </div>
+        <?php endforeach;?>
     </form>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+
 <script>
 
-    let targetForm = document.forms["form"];
-    let inputFields ={
-        "sku": targetForm['sku'],
-        "name": targetForm['name'],
-        "price": targetForm["price"],
-        "type":targetForm["type"],
-        "size":targetForm["size"],
-        "weight":targetForm["weight"],
-        "height":targetForm["height"],
-        "length":targetForm["length"],
-        "width":targetForm["width"],
-    };
 
-    formFieldsValues={
-        "sku":false,
-        "name":false,
-        "price":false,
-        "type":false,
-        "size":false,
-        "weight":false,
-        "height":false,
-        "width":false,
-        "length":false,
-    };
-    let selectedType="";
-    let staticFields=["sku","name","price","type"];
-    let optionalFields=["Book","Furniture","DVD-disc"];
-    let dimensionsFields=["height","width","length"];
-    let disableCandidates=["length","height","width","size","weight"];
-    function validateForm(){
-        for (let i = 0; i < staticFields.length; i++) {
-            if(formFieldsValues[staticFields[i]]===false){
-                populateErrors();
-                return false;
-            }
+    $(document).ready(function () {
+
+        function getOptionalFields(value){
+
+            $.post( "/addproduct/appendtoform", {"type":value} ,function(response) {
+                renderFields(response);
+            });
         }
-        if(selectedType==='Furniture'){
-            for (let i = 0; i < dimensionsFields.length; i++) {
-                if(formFieldsValues[dimensionsFields[i]]===false){
-                    populateErrors();
-                    return false
+
+        function renderFields(response){
+            removeOptionalFields("optional-container-class");
+            let container = document.forms["form"];
+            response.forEach(function (item,index){
+                const input = `
+                            <div class="mb-3 optional-container-class">
+                                <label>${item['label']}</label>
+                                <input name="${item['name']}"  type="${item['type']}" class="form-control optional-input-class"  step="${item['step']}">
+                                <div>${item['message']}</div>
+                            </div>
+`;
+                container.insertAdjacentHTML('beforeend',input);
+
+                addValidationsFor("optional-input-class");
+            });
+        }
+
+        function addValidationsFor(className){
+            $(`.${className}`).each(function () {
+                $(this).rules('add', {
+                    required: true,
+                    step: 0.01,
+                    min:0,
+                });
+            });
+        }
+
+        function removeOptionalFields(className){
+            document.querySelectorAll(`.${className}`).forEach(e=>e.remove());
+
+        }
+
+
+        $('#typeSelector').on("change",(function (val){
+            getOptionalFields($("#typeSelector").val());
+        }))
+
+        $('#form').validate({ // initialize the plugin
+            rules: {
+                sku: {
+                    required: true,
+                },
+                name:{
+                    required: true
+                },
+                price:{
+                    required: true,
+                    step: 0.01,
+                    min:0,
+                },
+                type:{
+                    required:true,
                 }
-            }
-        }
-        if(selectedType==='DVD-disk'){
-            if(formFieldsValues['size']===false){
-                populateErrors();
-                return false;
-            }
-        }
-        if(selectedType==='Book'){
-            if(formFieldsValues['weight']===false){
-                populateErrors();
-                return false;
-            }
-        }
-        disable(getOptionsToBeDisabled());
-        targetForm.submit();
-        targetForm.reset();
-        return false;
-    }
-
-
-    function getOptionsToBeDisabled(){
-        let toBeDisabled=[];
-        if(selectedType==="Book"){
-            toBeDisabled = disableCandidates.filter(ele=>(ele!=="weight"));
-        }else if(selectedType==="DVD-disk"){
-            toBeDisabled = disableCandidates.filter(ele=>(ele!=="size"));
-        }else if(selectedType==="Furniture"){
-            toBeDisabled = disableCandidates.filter(ele=>(ele!=="length" && ele!=="height" && ele!=="width"));
-        }
-        return toBeDisabled;
-    }
-    function disable(options){
-        for (let i = 0; i < options.length; i++) {
-            console.log(inputFields[options[i]].disabled = true);
-        }
-    }
-    function populateErrors(){
-        for (let i = 0; i < staticFields.length; i++) {
-            if(formFieldsValues[staticFields[i]]===false){
-                inputFields[staticFields[i]].classList.add("is-invalid");
-            }
-        }
-        if(selectedType==='DVD-disc'){
-            if(formFieldsValues['size']===false){
-                inputFields['size'].classList.add("is-invalid");
-            }
-        }
-        if(selectedType==='Book'){
-            if(formFieldsValues['weight']===false){
-                inputFields['weight'].classList.add("is-invalid");
-            }
-        }
-        if(selectedType==='Furniture'){
-            for (let i = 0; i < dimensionsFields.length; i++) {
-                if(formFieldsValues[dimensionsFields[i]]===false){
-                    inputFields[dimensionsFields[i]].classList.add("is-invalid");
+            },
+            messages:{
+                sku:{
+                    required: "SKU is a required field"
+                },
+                name:{
+                    required: "Name is a required field"
+                },
+                price:{
+                    required: "Price is a required field",
+                    min: "Price can not be negative",
+                    step: "Price can not contain more than two numbers after the dot"
+                },
+                type:{
+                    required:"Type is a required field"
                 }
-            }
-        }
-    }
-    function validate(inputName){
-        if(inputName === 'type'){
-            if(inputFields[inputName].value==='Choose type'){
-                formFieldsValues[inputName]=false;
-                inputFields[inputName].classList.add("is-invalid");
-            }else{
-                formFieldsValues[inputName]=true;
-                inputFields[inputName].classList.remove("is-invalid");
-            }
-        }else{
-            if(inputFields[inputName].value.trim()===''){
-                formFieldsValues[inputName]=false;
-                inputFields[inputName].classList.add("is-invalid");
-            }else{
-                formFieldsValues[inputName]=true;
-                inputFields[inputName].classList.remove("is-invalid");
-            }
-        }
-    }
-    function updateForm(){
-        closeAllOptionalFields();
-        let newField = inputFields['type'].value;
-        selectedType=newField;
-        if(newField!=='Choose type'){
-            document.querySelector("#"+newField).style.display="";
-        }
-    }
-    function closeAllOptionalFields(){
-        optionalFields.forEach(function (item){
-            document.querySelector("#"+item).style.display="none";
+            },
+            submitHandler: function (form) {
+                return true;
+            },
         });
-    }
+
+    });
+
+
 </script>
 </body>
 </html>

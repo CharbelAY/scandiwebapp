@@ -27,6 +27,8 @@ $app->router->get("/products/list",[ProductController::class,"productsList"]);
 
 $app->router->post("/products/list",[ProductController::class,"massDelete"]);
 
+$app->router->post("/addproduct/appendtoform",[ProductController::class,"appendFormsDynamicField"]);
+
 $app->router->get("/error",function (){
     return "error";
 });

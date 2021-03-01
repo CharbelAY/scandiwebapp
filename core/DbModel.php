@@ -31,13 +31,20 @@ abstract class DbModel extends Model
         $tableName = $this->tableName();
         $statement = self::prepare("SELECT * FROM $tableName");
         $statement->execute();
-        return $statement->fetchAll();
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function getAllWith($table){
         $tableName = $this->tableName();
         $tableId = $table . "_id";
         $statement = self::prepare("SELECT a.* , b.* FROM $tableName as b ,$table as a WHERE a.id = b.$tableId ");
+        $statement->execute();
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getAllWhere($key,$value){
+        $tableName = $this->tableName();
+        $statement = self::prepare("SELECT * FROM $tableName WHERE $key= '$value' ");
         $statement->execute();
         return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }

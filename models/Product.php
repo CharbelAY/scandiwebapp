@@ -8,12 +8,12 @@ use http\Exception;
 
 class Product extends DbModel
 {
-    public string $sku;
-    public string $name;
-    public float $price;
-    public string $type;
+    public string $sku = "";
+    public string $name ="";
+    public float $price = 0;
+    public string $type = "";
     public ?float $size=null;
-    public int $product_type_id ;
+    public ?int $product_type_id= null ;
     public ?float $weight=null;
     public ?float $length=null;
     public ?float $width=null;
@@ -35,14 +35,16 @@ class Product extends DbModel
         }
     }
 
+
     /**
      * @param $data
      * @throws \Exception
      */
     public function loadModel($data)
     {
-        $this->validateSku($data['sku']);
         parent::loadModel($data);
+        $this->validateSku($data['sku']);
+//        $this->validateNumericData();
     }
 
     public function prepareModel($data){
