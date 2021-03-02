@@ -9,32 +9,29 @@ use http\Exception;
 class Product extends DbModel
 {
     public string $sku = "";
-    public string $name ="";
+    public string $name = "";
     public float $price = 0;
     public string $type = "";
-    public ?float $size=null;
-    public ?int $product_type_id= null ;
-    public ?float $weight=null;
-    public ?float $length=null;
-    public ?float $width=null;
-    public ?float $height=null;
+    public ?float $size = null;
+    public ?int $product_type_id = null;
+    public ?float $weight = null;
+    public ?float $length = null;
+    public ?float $width = null;
+    public ?float $height = null;
 
-
-    public function tableName(): string
+    public static function present($fetchedData)
     {
-        return 'product';
-    }
-
-    /**
-     * @param $sku
-     * @throws \Exception
-     */
-    private function validateSku($sku){
-        if($this->getIdOfProperty($this->tableName(),'sku',$sku)!==null){
-            throw new \Exception('SKU should be a unique value. The value you entered is already present in the database');
+        foreach ($fetchedData as &$element) {
+            if ($element['type_name'] === 'DVD-disc') {
+                $element['measurement_presentation'] = 'Size' . ": " . $element['size'] . $element['unit_of_measure'];
+            } elseif ($element['type_name'] === 'Book') {
+                $element['measurement_presentation'] = 'Weight' . ": " . $element['weight'] . $element['unit_of_measure'];;
+            } else {
+                $element['measurement_presentation'] = 'Dimentions' . ": " . $element['height'] . 'x' . $element['width'] . 'x' . $element['length'] . $element['unit_of_measure'];;
+            }
         }
+        return $fetchedData;
     }
-
 
     /**
      * @param $data
@@ -47,39 +44,44 @@ class Product extends DbModel
 //        $this->validateNumericData();
     }
 
-    public function prepareModel($data){
-        if(array_key_exists ( "type" ,  $data )){
-            if($data["type"]==="size"){
-                $this->type="DVD-disc";
+    /**
+     * @param $sku
+     * @throws \Exception
+     */
+    private function validateSku($sku)
+    {
+        if ($this->getIdOfProperty($this->tableName(), 'sku', $sku) !== null) {
+            throw new \Exception('SKU should be a unique value. The value you entered is already present in the database');
+        }
+    }
+
+    public function tableName(): string
+    {
+        return 'product';
+    }
+
+    public function prepareModel($data)
+    {
+        if (array_key_exists("type", $data)) {
+            if ($data["type"] === "size") {
+                $this->type = "DVD-disc";
             }
-            if($data["type"]==="weight"){
-                $this->type="Book";
+            if ($data["type"] === "weight") {
+                $this->type = "Book";
             }
-            if($data["type"]==="dimensions"){
-                $this->type="Furniture";
+            if ($data["type"] === "dimensions") {
+                $this->type = "Furniture";
             }
         }
     }
 
-    public static function present($fetchedData){
-        foreach ($fetchedData as &$element){
-            if($element['type_name']==='DVD-disc'){
-                $element['measurement_presentation'] = 'Size' . ": " . $element['size'] . $element['unit_of_measure'];
-            }elseif ($element['type_name']==='Book'){
-                $element['measurement_presentation']= 'Weight' . ": " . $element['weight'] . $element['unit_of_measure'];;
-            }else{
-                $element['measurement_presentation']= 'Dimentions' . ": " . $element['height'] . 'x' . $element['width'] . 'x' . $element['length'] . $element['unit_of_measure'];;
-            }
-        }
-        return $fetchedData;
-    }
-
-    public function dontSave():array{
+    public function dontSave(): array
+    {
         return ['type'];
     }
 
     public function attributes(): array
     {
-        return ["sku","name","price","type","size","weight","length","width","height","product_type_id"];
+        return ["sku", "name", "price", "type", "size", "weight", "length", "width", "height", "product_type_id"];
     }
 }
