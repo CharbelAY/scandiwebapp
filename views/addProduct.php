@@ -143,7 +143,7 @@
                     step: 0.01,
                     min: 0,
                 },
-                type: {
+                product_type_id: {
                     required: true,
                 }
             },
@@ -159,7 +159,7 @@
                     min: "Price can not be negative",
                     step: "Price can not contain more than two numbers after the dot"
                 },
-                type: {
+                product_type_id: {
                     required: "Type is a required field"
                 }
             },
