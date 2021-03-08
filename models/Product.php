@@ -60,20 +60,6 @@ class Product extends DbModel
         return 'product';
     }
 
-    public function prepareModel($data)
-    {
-        if (array_key_exists("type", $data)) {
-            if ($data["type"] === "size") {
-                $this->type = "DVD-disc";
-            }
-            if ($data["type"] === "weight") {
-                $this->type = "Book";
-            }
-            if ($data["type"] === "dimensions") {
-                $this->type = "Furniture";
-            }
-        }
-    }
 
     public function dontSave(): array
     {
