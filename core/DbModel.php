@@ -59,6 +59,13 @@ abstract class DbModel extends Model
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getFirst($columnName, $value){
+        $tableName = $this->tableName();
+        $statement = self::prepare("SELECT * FROM $tableName WHERE $columnName= '$value' ");
+        $statement->execute();
+        return $statement->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function getIdOfProperty($table, $columnName, $value)
     {
         $statement = self::prepare("SELECT id FROM $table WHERE $columnName= '$value' ");

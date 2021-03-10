@@ -61,10 +61,10 @@
         <div class="mb-3">
             <label>Type Switcher</label>
             <select class="form-select mb-3" name="product_type_id" id="typeSelector"
-                    value="<?= $model->product_type_id; ?>">
+                    value="<?= $model->type; ?>">
                 <option value=""> Choose type</option>
                 <?php foreach ($product_type as $type): ?>
-                    <option value="<?= $type["id"]; ?>" <?= $model->product_type_id == $type["id"] ? 'selected="selected"' : '' ?>> <?= $type["type_name"] ?> </option>
+                    <option value="<?= $type["type_name"]; ?>" <?= $model->type == $type["type_name"] ? 'selected="selected"' : '' ?>> <?= $type["type_name"] ?> </option>
                 <?php endforeach; ?>
             </select>
         </div>

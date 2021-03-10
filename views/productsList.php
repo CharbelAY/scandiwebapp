@@ -25,12 +25,12 @@
                 <div class="card text-center m-3" style="width: 20rem; display: inline-block">
                     <div class="card-body">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="<?= $product["id"] ?>">
+                            <input class="form-check-input" type="checkbox" name="<?= $product->id ?>">
                         </div>
-                        <h5 class="card-title"><?= $product["sku"] ?></h5>
-                        <h5 class="card-title"><?= $product["name"] ?></h5>
-                        <h5 class="card-title"><?= $product["price"] . " $" ?></h5>
-                        <h5 class="card-title"><?= $product["measurement_presentation"] ?></h5>
+                        <h5 class="card-title"><?= $product->sku ?></h5>
+                        <h5 class="card-title"><?= $product->name ?></h5>
+                        <h5 class="card-title"><?= $product->price . " $" ?></h5>
+                        <h5 class="card-title"><?= $product->measurement_presentation ?></h5>
                     </div>
                 </div>
             <?php endforeach; ?>

@@ -5,9 +5,10 @@ namespace app\controllers;
 use app\core\BaseController;
 use app\core\Request;
 use app\models\OptionalsInputs;
-use app\models\Product;
+use app\models\products\Product;
+use app\models\products\Dvd;
+use app\models\products\Book;
 use app\models\ProductType;
-use mysql_xdevapi\Exception;
 
 class ProductController extends BaseController
 {
@@ -16,9 +17,17 @@ class ProductController extends BaseController
     {
         $product = new Product();
         $fetchedData = $product->getAllWith('product_type');
-        $fetchedData = Product::present($fetchedData);
+        $products=[];
+        foreach ($fetchedData as $data ){
+            $name = "app\models\products\\" . $data["type_name"];
+            $tempClass = new $name();
+
+            $tempClass->loadModel($data);
+            $tempClass->present();
+            array_push($products,$tempClass);
+        }
         $params = [
-            "products" => $fetchedData,
+            "products" => $products,
         ];
         return $this->render("productsList", $params);
     }
@@ -44,19 +53,24 @@ class ProductController extends BaseController
 
     public function handleAddProduct(Request $request)
     {
-        $product = new Product();
         $productType = new ProductType();
         $optionalInputsClass = new OptionalsInputs();
         $body = $request->getBody();
         try {
+            $name = "app\models\products\\" . $body['type'];
+            $product = new $name();
             $product->loadModel($body);
         } catch (\Exception $e) {
-            $optionalInputsData = $optionalInputsClass->getAllWhere("product_type_id", $body["product_type_id"]);
+            $productType = new ProductType();
+            $productTypeId=$productType->getFirst("type_name",$product->type)['id'];
+            $optionalInputsData = $optionalInputsClass->getAllWhere("product_type_id", $productTypeId);
             return $this->render("addProduct", ["model" => $product, "errorMessage" => $e->getMessage(), "optionalInputs" => $optionalInputsData, "product_type" => $productType->getAll()]);
         }
         $product->product_type_id = $product->getIdOfProperty('product_type', 'id', $body["product_type_id"]);
 
         try{
+            $productType = new ProductType();
+            $product->product_type_id=$productType->getFirst("type_name",$product->type)['id'];
             $product->save();
             header('Location: ' . "/products/list");
             exit();
@@ -71,9 +85,12 @@ class ProductController extends BaseController
         header("Content-type:application/json");
         $optionalInputsClass = new OptionalsInputs();
         $body = $request->getBody();
+        $productType =  new ProductType();
         $optionalInputs = [];
         if ($body['type'] !== null && $body['type'] !== '') {
-            $optionalInputs = $optionalInputsClass->getAllWhere("product_type_id", $body["type"]);
+            $name = "app\models\products\\" . $body['type'];
+            $tempClass = new $name();
+            $optionalInputs = $tempClass->getOptionalFields();
         }
         return json_encode($optionalInputs);
     }
