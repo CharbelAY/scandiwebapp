@@ -55,12 +55,12 @@
         </div>
         <div class="mb-3">
             <label>Price ($)</label>
-            <input name="price" type="number" class="form-control"
+            <input name="price" type="number" class="form-control" step="0.001"
                    value="<?= $model->price == 0 ? null : $model->price; ?>">
         </div>
         <div class="mb-3">
             <label>Type Switcher</label>
-            <select class="form-select mb-3" name="product_type_id" id="typeSelector"
+            <select class="form-select mb-3" name="type" id="typeSelector"
                     value="<?= $model->type; ?>">
                 <option value=""> Choose type</option>
                 <?php foreach ($product_type as $type): ?>
@@ -114,7 +114,7 @@
             $(`.${className}`).each(function () {
                 $(this).rules('add', {
                     required: true,
-                    step: 0.01,
+                    step: 0.001,
                     min: 0,
                 });
             });
@@ -140,10 +140,10 @@
                 },
                 price: {
                     required: true,
-                    step: 0.01,
+                    step: 0.001,
                     min: 0,
                 },
-                product_type_id: {
+                type: {
                     required: true,
                 }
             },
@@ -159,7 +159,7 @@
                     min: "Price can not be negative",
                     step: "Price can not contain more than two numbers after the dot"
                 },
-                product_type_id: {
+                type: {
                     required: "Type is a required field"
                 }
             },
